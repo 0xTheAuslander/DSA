@@ -1,77 +1,111 @@
 /**
- * Create a single linked list
- * traverse the linked list to count the number of elements and access datat
- * add element at the end of the linked list
-*/
+ * Program to create and manipulate a singly linked list.
+ * 
+ * This program performs the following operations:
+ * - Initializes a linked list with a single element.
+ * - Traverses and counts the elements in the linked list.
+ * - Adds elements at the beginning and at the end of the linked list.
+ * - Frees the entire linked list to release allocated memory.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
-struct node 
-{
+// Define the node structure
+struct node {
     int data;
     struct node *link;
 };
 
-void listTraversing(struct node *head);
-struct node *insertElementAtEnd(struct node *ptr, int data);
+// Function prototypes
+void listTraversing(const struct node *head);
+struct node *insertElementAtEnd(struct node *head, int data);
+struct node *insertElementAtBeginning(struct node *head, int data);
+void freeList(struct node *head);
 
-int main(void)
-{
+int main(void) {
     struct node *head = malloc(sizeof(struct node));
+    if (!head) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
     head->data = 56;
     head->link = NULL;
 
-    struct node *ptr = head;
+    // Add elements to the end of the list
+    head = insertElementAtEnd(head, 98);
+    head = insertElementAtEnd(head, 76);
+    head = insertElementAtEnd(head, 100);
 
-    ptr = insertElementAtEnd(ptr, 98);
-    ptr = insertElementAtEnd(ptr, 76);
-    ptr = insertElementAtEnd(ptr, 100);
+    // Add an element to the beginning of the list
+    head = insertElementAtBeginning(head, 1);
 
+    // Traverse and print the list
     listTraversing(head);
 
-    ptr = head;
-    // Traverse to the last node
-    while (ptr->link != NULL) {
-        ptr = ptr->link;
-    }
-    
-    // Freeing all allocated nodes
-    struct node *ptrx = head;
-    while (ptrx != NULL) {
-        struct node *temp = ptrx;
-        ptrx = ptrx->link;
-        free(temp);
-    }
+    // Free all allocated nodes
+    freeList(head);
+
+    return 0;
 }
 
-void listTraversing(struct node *head)
-{
-    if (!head)
-        printf("Linked list is empty\n");
-    struct node *ptr = head;
-
+// Traverse the list, print each element and count nodes
+void listTraversing(const struct node *head) {
     int count = 0;
-    printf("List elements: ");
-    while (ptr != NULL)
-    {
-        if (count > 0)
-            printf(", ");
-        printf("%d", ptr->data);
+    const struct node *current = head;
 
+    printf("List elements: ");
+    while (current != NULL) {
+        printf("%d%s", current->data, current->link ? " -> " : "");
         count++;
-        ptr = ptr->link;
+        current = current->link;
     }
     printf("\nThe number of nodes: %d\n", count);
 }
 
-struct node *insertElementAtEnd(struct node *ptr, int data)
-{
+// Insert an element at the end of the list
+struct node *insertElementAtEnd(struct node *head, int data) {
     struct node *temp = malloc(sizeof(struct node));
+    if (!temp) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return head;
+    }
     temp->data = data;
     temp->link = NULL;
 
-    ptr->link = temp;  // Link last node to the new node
-    return temp;
+    if (!head) {
+        // If the list is empty, the new node is the head
+        return temp;
+    }
+
+    struct node *current = head;
+    while (current->link != NULL) {
+        current = current->link;
+    }
+    current->link = temp;
+
+    return head;
+}
+
+// Insert an element at the beginning of the list
+struct node *insertElementAtBeginning(struct node *head, int data) {
+    struct node *newElement = malloc(sizeof(struct node));
+    if (!newElement) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return head;
+    }
+    newElement->data = data;
+    newElement->link = head;
+    return newElement;
+}
+
+// Free the entire list to avoid memory leaks
+void freeList(struct node *head) {
+    struct node *current = head;
+    while (current != NULL) {
+        struct node *temp = current;
+        current = current->link;
+        free(temp);
+    }
 }
