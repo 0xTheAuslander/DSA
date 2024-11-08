@@ -20,7 +20,8 @@ struct node {
 // Function prototypes
 void listTraversing(const struct node *head);
 struct node *insertElementAtEnd(struct node *head, int data);
-struct node *insertElementAtBeginning(struct node *head, int data);
+void insertElementAtBeginning(struct node **head, int data);
+void insertElementAtPosition(struct node *head, int data, int position);
 void freeList(struct node *head);
 
 int main(void) {
@@ -39,7 +40,10 @@ int main(void) {
     head = insertElementAtEnd(head, 100);
 
     // Add an element to the beginning of the list
-    head = insertElementAtBeginning(head, 1);
+    insertElementAtBeginning(&head, 1);
+    
+    // Add an element at a certain position
+    insertElementAtPosition(head, 6, 3);
 
     // Traverse and print the list
     listTraversing(head);
@@ -51,7 +55,8 @@ int main(void) {
 }
 
 // Traverse the list, print each element and count nodes
-void listTraversing(const struct node *head) {
+void listTraversing(const struct node *head) 
+{
     int count = 0;
     const struct node *current = head;
 
@@ -65,7 +70,8 @@ void listTraversing(const struct node *head) {
 }
 
 // Insert an element at the end of the list
-struct node *insertElementAtEnd(struct node *head, int data) {
+struct node *insertElementAtEnd(struct node *head, int data) 
+{
     struct node *temp = malloc(sizeof(struct node));
     if (!temp) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -74,13 +80,15 @@ struct node *insertElementAtEnd(struct node *head, int data) {
     temp->data = data;
     temp->link = NULL;
 
-    if (!head) {
+    if (!head) 
+    {
         // If the list is empty, the new node is the head
         return temp;
     }
 
     struct node *current = head;
-    while (current->link != NULL) {
+    while (current->link != NULL) 
+    {
         current = current->link;
     }
     current->link = temp;
@@ -89,19 +97,45 @@ struct node *insertElementAtEnd(struct node *head, int data) {
 }
 
 // Insert an element at the beginning of the list
-struct node *insertElementAtBeginning(struct node *head, int data) {
+void insertElementAtBeginning(struct node **head, int data) 
+{
     struct node *newElement = malloc(sizeof(struct node));
-    if (!newElement) {
+    if (!newElement) 
+    {
         fprintf(stderr, "Memory allocation failed\n");
-        return head;
     }
     newElement->data = data;
-    newElement->link = head;
-    return newElement;
+    newElement->link = *head;
+    *head = newElement;
+}
+
+// Inserting a Node at a Certain Position
+void insertElementAtPosition(struct node *head, int data, int position) 
+{
+    struct node *newElement = malloc(sizeof(struct node));
+    if (!newElement) 
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    struct node *current = head;
+    int currentPos = 0;
+
+    // Traverse to the node just before the insertion point
+    while (currentPos < position - 1) 
+    {
+        current = current->link;
+        currentPos++;
+    }
+     // Insert the new node at the specified position
+    newElement->data = data;
+    newElement->link = current->link;
+    current->link = newElement;
 }
 
 // Free the entire list to avoid memory leaks
-void freeList(struct node *head) {
+void freeList(struct node *head) 
+{
     struct node *current = head;
     while (current != NULL) {
         struct node *temp = current;
