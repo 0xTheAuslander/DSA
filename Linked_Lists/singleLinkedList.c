@@ -27,10 +27,10 @@ struct node *del_first(struct node *head);
 void del_last(struct node **head);
 void deleteElementAtPosition(struct node **head, int position); 
 void del_entire_list(struct node **head); 
+void reverse_linked_list(struct node **head);
 void freeList(struct node *head);
 
 int main(void) {
-    // Initialize linked list with one element
     struct node *head = malloc(sizeof(struct node));
     if (!head) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -39,46 +39,51 @@ int main(void) {
     head->data = 56;
     head->link = NULL;
 
+    printf("Initial list:\n");
+    listTraversing(head);
+
     // Add elements to the end of the list
+    printf("\nAdding elements at the end:\n");
     head = insertElementAtEnd(head, 98);
     head = insertElementAtEnd(head, 76);
     head = insertElementAtEnd(head, 100);
-    head = insertElementAtEnd(head, 37);
-    head = insertElementAtEnd(head, 20);
-    head = insertElementAtEnd(head, 34);
+    listTraversing(head);
 
     // Add an element to the beginning of the list
+    printf("\nAdding element at the beginning:\n");
     insertElementAtBeginning(&head, 1);
-    
-    // Add an element at a certain position
-    insertElementAtPosition(head, 6, 3);
+    listTraversing(head);
 
-    // Traverse and print the list
+    // Add an element at a certain position
+    printf("\nAdding element at position 3:\n");
+    insertElementAtPosition(head, 6, 3);
     listTraversing(head);
 
     // Delete the first node
+    printf("\nDeleting the first node:\n");
     head = del_first(head);
-
-    // Delete the last node
-    del_last(&head);
-    
-    // Delete the last node
-    deleteElementAtPosition(&head, 4);
-
-    // Traverse and print the list
     listTraversing(head);
 
-    // Delete entire liste
+    // Delete the last node
+    printf("\nDeleting the last node:\n");
+    del_last(&head);
+    listTraversing(head);
+
+    // Delete a node at a specific position
+    printf("\nDeleting node at position 4:\n");
+    deleteElementAtPosition(&head, 4);
+    listTraversing(head);
+
+    // Delete the entire list
+    printf("\nDeleting the entire list:\n");
     del_entire_list(&head);
     listTraversing(head);
     if (head == NULL)
-        printf("Linked List deleted succesfully!\n");
-    
-    // Free all allocated nodes
-    freeList(head);
+        printf("Linked List deleted successfully!\n");
 
     return 0;
 }
+
 
 // Traverse the list, print each element, and count nodes
 void listTraversing(const struct node *head) {
